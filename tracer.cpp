@@ -89,20 +89,26 @@ void __cyg_profile_func_enter(void *func_address, void *call_site) {
   if (!caller)
     return;
 
-  char *param_address = 0;
+  const char *param_address = 0;
 
   if (func_name && strcmp(func_name, "main") &&
       !IsConst_Destructor(demangled)) {
 #ifdef __i386__
     param_address = *(char **)(((char *)__builtin_frame_address(1)) + 12);
 #elif __x86_64__
-    param_address = *(char **)(((char *)__builtin_frame_address(1)) + 24);
-    printf("%lx\n", *((unsigned long int *)param_address));
+    param_address = *(char **)(((char *)__builtin_frame_address(1)) + 16);
+// char *param_address1 =
+//     *(char **)(((char *)__builtin_frame_address(1)) + 16);
+// printf("param : %p\n", param_address);
+// printf("%lx\n", *((unsigned long int *)param_address));
+// printf("param1 : %p\n", param_address1);
+// printf("%lx\n", *((unsigned long int *)param_address1));
 #endif
   }
-  debug_print(func_name, demangled, caller, demangled_caller, param_address);
+  debug_print(func_name, demangled, caller, demangled_caller,
+              (char *)param_address);
   output_to_file_enter(func_name, demangled, caller, demangled_caller,
-                       param_address);
+                       (char *)param_address);
 
   if (demangled)
     demangle_free(demangled);
@@ -128,8 +134,6 @@ void __cyg_profile_func_exit(void *func_address, void *call_site) {
   const char *demangled_caller = (char *)demangle(caller);
   if (!caller)
     return;
-
-  char *param_address = 0;
 
   output_to_file_exit(func_name, demangled, caller, demangled_caller);
 

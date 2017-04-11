@@ -20,6 +20,8 @@ void output_to_file_enter_plantuml(const char *func_name, const char *demangled,
     fprintf(g_output_fp, "@startuml %s.png\n", OUTPUT_PLANTUML_FILENAME);
   }
 
+  printf("%s %p %s\n", __FUNCTION__, (char *)param, (char *)param);
+
   char *callee_object = NULL;
   char *p = (char *)malloc(strlen(demangled) + 1);
   strcpy(p, demangled);
